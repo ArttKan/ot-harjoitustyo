@@ -1,4 +1,5 @@
 
+ ```mermaid
  sequenceDiagram
     main->>HKLLaitehallinto: laitehallinto
     main->>rautatietori: Lataajalaite()
@@ -12,3 +13,4 @@
     rautatietori->>kallen_kortti: lataa_arvoa(kallen_kortti, 3)
     ratikka6->>kallen_kortti: osta_lippu(kallen_kortti, 0)
     bussi244->>kallen_kortti: osta_lippu(kallen_kortti, 2)
+```
