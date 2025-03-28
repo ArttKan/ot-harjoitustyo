@@ -1,5 +1,11 @@
-# ot-harjoitustyo
-## Ohjelmistotekniikka, harjoitustyö
-_Jotakin_ **tosi** siistiä jee.  
-Laskarit: https://github.com/ArttKan/ot-harjoitustyo/tree/main/laskarit  
-Vaatimusmäärittely: https://github.com/ArttKan/ot-harjoitustyo/blob/main/dokumentaatio/vaatimusmaarittely.md  
+# Scorekeeper
+Sovelluksen tarkoituksena on toimia pistelasku- ja pelitapahtumakirjanpito-ohjelmana kuvitteellisille koripallopeleille.
+## Dokumentaatio
+[Vaatimusmäärittely](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/dokumentaatio/vaatimusmaarittely.md)
+[Työaikakirjanpito](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/dokumentaatio/tyoaikakirjanpito.md)
+[Changelog](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/dokumentaatio/changelog.md)
+## Invoke-komennot
+Saatavilla olevat invoke-komennot:  
+`poetry run invoke start`  
+`poetry run invoke test`  
+`poetry run invoke coverage-report`  
