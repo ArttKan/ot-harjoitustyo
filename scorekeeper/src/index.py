@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import messagebox
-from entities.event import Event
 from services.score_service import ScoreService
 
 Scorekeeper = ScoreService()
@@ -15,9 +14,9 @@ def handle_add_event():
         return
 
     try:
-        event_content = int(event_content)  # Convert score to integer
+        event_content = int(event_content)
     except ValueError:
-        messagebox.showerror("Error", "Score must be a number.")
+        messagebox.showerror("Error", "Content must be a number.")
         return
 
     Scorekeeper.add_event(event_type, event_content)
@@ -29,8 +28,8 @@ def handle_add_event():
 
 
 def update_event_list():
-    event_listbox.delete(0, tk.END)  # Clear the Listbox
-    events = Scorekeeper.get_events()  # Retrieve the list of events
+    event_listbox.delete(0, tk.END)
+    events = Scorekeeper.get_events()
     for event in events:
         event_listbox.insert(tk.END, f"{event.type} - Score: {event.content}")
 
