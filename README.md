@@ -1,5 +1,4 @@
 # Scorekeeper
-Sovelluksen tarkoituksena on toimia pistelasku- ja pelitapahtumakirjanpito-ohjelmana kuvitteellisille koripallopeleille.
 The purpose of the application is to act as a scorekeeping and event recording tool for imaginary basketball games.
 ## Documentation
 [Requirement specification](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/documentation/requirementspeficiation.md)  
