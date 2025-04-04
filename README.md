@@ -1,7 +1,7 @@
 # Scorekeeper
 The purpose of the application is to act as a scorekeeping and event recording tool for imaginary basketball games.
 ## Documentation
-[Requirement specification](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/documentation/requirementspeficiation.md)  
+[Requirement specification](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/documentation/requirementspecification.md)  
 [Timelog](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/documentation/timelog.md)  
 [Changelog](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/documentation/changelog.md)  
 ## Invoke-commands
