@@ -4,6 +4,8 @@ from services.score_service import ScoreService
 
 Scorekeeper = ScoreService()
 
+# Copilot helped with this section significantly
+
 
 def handle_add_event():
     event_type = event_type_entry.get()
