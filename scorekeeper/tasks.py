@@ -26,3 +26,8 @@ def coverage_report_html(ctx):
 @task
 def lint(ctx):
     ctx.run("pylint src", pty=True)
+
+
+@task
+def clean(ctx):
+    ctx.run("rm .coverage .coveragerc", pty=True)
