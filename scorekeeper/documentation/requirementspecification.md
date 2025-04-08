@@ -16,11 +16,11 @@ Initially, only a regular user. The possibility to add an admin user later if th
 - Logout
 
 ### Core Functionality
--Create a new game  
--Add/select 2 teams for the game  
--Game event input field  
--Dropdown menu or similar for selecting the event type (basket/foul/other?)  
--Depending on the event type, selection of additional data fields  
+- Create a new game  
+- Add/select 2 teams for the game  
+- Game event input field  
+- Dropdown menu or similar for selecting the event type (basket/foul/other?)  
+- Depending on the event type, selection of additional data fields  
     - For example, basket: 2/3 points, scorer, assister, etc.  
     - For example, foul: fouled player, fouling player, type of foul, etc.  
 - Some kind of permanent view of the game's current status (teams, scores, team fouls)  
