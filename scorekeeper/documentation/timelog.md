@@ -5,4 +5,5 @@
 | 31.3.| 3,5    | First draft of the core components of the application, first tests|
 | 4.4.| 1    | General upkeep for week 4|
 | 4.4.| 2   | | added team selection, teams, players, refined event input|
-| Sum| 8,5    | |
+| 8.4.| 3   | | added creating game, fixed team selection problems, some general maintenance and documentation|
+| Sum| 11,5    | |
