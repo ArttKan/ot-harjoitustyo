@@ -30,4 +30,4 @@ def lint(ctx):
 
 @task
 def clean(ctx):
-    ctx.run("rm .coverage .coveragerc", pty=True)
+    ctx.run("rm .coverage", pty=True)

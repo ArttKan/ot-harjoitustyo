@@ -2,8 +2,8 @@ import uuid
 
 
 class Event:
-    def __init__(self, type, content, user=None):
-        self.type = type
+    def __init__(self, event_type, content, user=None):
+        self.type = event_type
         self.content = content
         self.user = user
         self.event_id = uuid.uuid4()

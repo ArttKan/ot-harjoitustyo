@@ -9,7 +9,7 @@ class Team:
         self.points = 0
 
     def add_player(self, player: Player):
-        self.players.append(Player)
+        self.players.append(player)
 
     def get_players(self):
         return self.players

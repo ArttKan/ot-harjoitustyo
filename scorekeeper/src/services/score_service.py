@@ -8,8 +8,8 @@ class ScoreService:
         self.events = []
         self.teams = []
 
-    def add_event(self, content, type):
-        event = Event(type, content=content, user=self.user)
+    def add_event(self, content, event_type):
+        event = Event(event_type, content=content, user=self.user)
         self.events.append(event)
 
     def get_events(self):
@@ -18,5 +18,5 @@ class ScoreService:
     def add_team(self, team: Team):
         self.teams.append(team)
 
-    def get_teams(self, team):
+    def get_teams(self):
         return self.teams
