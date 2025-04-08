@@ -4,6 +4,7 @@ The purpose of the application is to act as a scorekeeping and event recording t
 [Requirement specification](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/documentation/requirementspecification.md)  
 [Timelog](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/documentation/timelog.md)  
 [Changelog](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/documentation/changelog.md)  
+[Architecture](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/documentation/architecture.md)  
 ## Invoke-commands
 To run the application install the required dependencies with:  
 `poetry install`  
