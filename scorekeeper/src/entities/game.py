@@ -11,8 +11,11 @@ class Game:
     def add_away_team(self, away_team):
         self.away_team = away_team
 
-    def get_teams(self):
+    def get_team_names(self):
         away_team = None
         if self.away_team:
             away_team = self.away_team.name
         return [self.home_team.name, away_team]
+
+    def get_teams(self):
+        return [self.home_team, self.away_team]
