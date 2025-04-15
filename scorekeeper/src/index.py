@@ -6,6 +6,7 @@ from entities.player import Player
 from entities.game import Game
 from entities.event import Event
 
+# Used a lot of copilot to help write the UI
 
 Scorekeeper = ScoreService()
 current_game = None
@@ -46,34 +47,6 @@ def start_new_game():
     start_game_frame.grid_forget()  # Hide the start game frame
     # Show the team selection frame
     team1_selection_frame.grid(row=0, column=0, columnspan=2, pady=10)
-
-
-def handle_add_event():
-    event_type = selected_event_type.get()
-    event_content = event_content_entry.get()
-
-    if not event_type or not event_content:
-        messagebox.showerror("Error", "Please fill in all fields.")
-        return
-
-    try:
-        event_content = int(event_content)
-    except ValueError:
-        messagebox.showerror("Error", "Content must be a number.")
-        return
-
-    Scorekeeper.add_event(event_type, event_content)
-    messagebox.showinfo("Success", f"Event '{event_type}' added successfully!")
-    event_content_entry.delete(0, tk.END)
-
-    update_event_list()
-
-
-def update_event_list():
-    event_listbox.delete(0, tk.END)
-    events = Scorekeeper.get_events()
-    for event in events:
-        event_listbox.insert(tk.END, f"{event.type} - Score: {event.content}")
 
 
 def handle_team1_selection():
@@ -122,131 +95,100 @@ def handle_team2_selection():
     player_selection_frame.grid(row=1, column=0, columnspan=2, pady=10)
 
 
+def update_continue_button_state(continue_button):
+    """Update the continue button state based on player counts."""
+    if not current_game or not current_game.get_teams():
+        return
+    team1_players = len(current_game.get_teams()[0].get_players())
+    team2_players = len(current_game.get_teams()[1].get_players())
+
+    if team1_players > 0 and team2_players > 0:
+        continue_button.config(state=tk.NORMAL)
+    else:
+        continue_button.config(state=tk.DISABLED)
+
+
+def handle_player_selection(player_listbox, input_frame, event_type, team):
+    """Handle player selection and show confirmation screen."""
+    selection = player_listbox.curselection()
+    if not selection:
+        messagebox.showerror("Error", "Please select a player")
+        return
+    selected_player = team.get_players()[selection[0]]
+    show_event_confirmation(input_frame, event_type, team, selected_player)
+
+
+def create_player_input_frame(frame, team, continue_button):
+    """Create input frame for a team's players."""
+    players_frame = tk.Frame(frame)
+
+    tk.Label(players_frame,
+             text=f"{team.name} Players",
+             font=("Arial", 12, "bold")).grid(row=0, column=0, pady=5, columnspan=2)
+
+    player_listbox = tk.Listbox(players_frame, height=10, width=30)
+    player_listbox.grid(row=1, column=0, pady=5, columnspan=2)
+
+    # Player Input Fields
+    tk.Label(players_frame, text="Name:").grid(row=2, column=0, pady=5)
+    name_entry = tk.Entry(players_frame)
+    name_entry.grid(row=2, column=1, pady=5)
+
+    tk.Label(players_frame, text="Number:").grid(row=3, column=0, pady=5)
+    number_entry = tk.Entry(players_frame)
+    number_entry.grid(row=3, column=1, pady=5)
+
+    error_label = tk.Label(players_frame, text="", fg="red")
+    error_label.grid(row=4, column=0, columnspan=2, pady=5)
+
+    def add_player_callback():
+        validate_and_add_player(
+            team, name_entry, number_entry, error_label, player_listbox)
+        update_continue_button_state(continue_button)
+
+    add_player_button = tk.Button(
+        players_frame,
+        text="Add Player",
+        command=add_player_callback
+    )
+    add_player_button.grid(row=5, column=0, columnspan=2, pady=5)
+
+    # Show existing players
+    for player in team.get_players():
+        player_listbox.insert(tk.END, f"#{player.number:02d} {player.name}")
+
+    return players_frame, player_listbox
+
+
 def setup_player_selection_frame():
     """Initialize and configure the player selection frame."""
     frame = tk.Frame(root)
-    continue_button = None  # Define button at function scope
 
-    def update_continue_button_state():
-        """Update the continue button state based on player counts."""
-        if not current_game or not current_game.get_teams():
-            return
-        team1_players = len(current_game.get_teams()[0].get_players())
-        team2_players = len(current_game.get_teams()[1].get_players())
-
-        if team1_players > 0 and team2_players > 0:
-            continue_button.config(state=tk.NORMAL)
-        else:
-            continue_button.config(state=tk.DISABLED)
-
-    def add_player_to_team(team, name_entry, number_entry, error_label, listbox):
-        """Add player to team and update continue button."""
-        validate_and_add_player(
-            team, name_entry, number_entry, error_label, listbox)
-        update_continue_button_state()
+    # Create continue button
+    continue_button = tk.Button(
+        frame,
+        text="Continue to Game",
+        command=lambda: continue_to_game(frame),
+        state=tk.DISABLED
+    )
+    continue_button.grid(row=1, column=0, columnspan=2, pady=20)
 
     def update_player_frame():
         """Update the player frame with current game teams."""
         if not current_game or not current_game.get_teams():
             return frame
 
-        # Team 1 Players
-        team1_players_frame = tk.Frame(frame)
-        team1_players_frame.grid(row=0, column=0, padx=20, pady=10)
+        # Create team frames
+        team1_frame, _ = create_player_input_frame(
+            frame, current_game.get_teams()[0], continue_button)
+        team1_frame.grid(row=0, column=0, padx=20, pady=10)
 
-        tk.Label(team1_players_frame,
-                 text=f"{current_game.get_teams()[0].name} Players",
-                 font=("Arial", 12, "bold")).grid(row=0, column=0, pady=5, columnspan=2)
+        team2_frame, _ = create_player_input_frame(
+            frame, current_game.get_teams()[1], continue_button)
+        team2_frame.grid(row=0, column=1, padx=20, pady=10)
 
-        team1_player_listbox = tk.Listbox(
-            team1_players_frame, height=10, width=30)
-        team1_player_listbox.grid(row=1, column=0, pady=5, columnspan=2)
-
-        # Team 1 Player Input Fields
-        tk.Label(team1_players_frame, text="Name:").grid(
-            row=2, column=0, pady=5)
-        name_entry1 = tk.Entry(team1_players_frame)
-        name_entry1.grid(row=2, column=1, pady=5)
-
-        tk.Label(team1_players_frame, text="Number:").grid(
-            row=3, column=0, pady=5)
-        number_entry1 = tk.Entry(team1_players_frame)
-        number_entry1.grid(row=3, column=1, pady=5)
-
-        error_label1 = tk.Label(team1_players_frame, text="", fg="red")
-        error_label1.grid(row=4, column=0, columnspan=2, pady=5)
-
-        add_player1_button = tk.Button(
-            team1_players_frame,
-            text="Add Player",
-            command=lambda: add_player_to_team(
-                current_game.get_teams()[0],
-                name_entry1,
-                number_entry1,
-                error_label1,
-                team1_player_listbox
-            )
-        )
-        add_player1_button.grid(row=5, column=0, columnspan=2, pady=5)
-
-        # Team 2 Players
-        team2_players_frame = tk.Frame(frame)
-        team2_players_frame.grid(row=0, column=1, padx=20, pady=10)
-
-        tk.Label(team2_players_frame,
-                 text=f"{current_game.get_teams()[1].name} Players",
-                 font=("Arial", 12, "bold")).grid(row=0, column=0, pady=5, columnspan=2)
-
-        team2_player_listbox = tk.Listbox(
-            team2_players_frame, height=10, width=30)
-        team2_player_listbox.grid(row=1, column=0, pady=5, columnspan=2)
-
-        # Team 2 Player Input Fields
-        tk.Label(team2_players_frame, text="Name:").grid(
-            row=2, column=0, pady=5)
-        name_entry2 = tk.Entry(team2_players_frame)
-        name_entry2.grid(row=2, column=1, pady=5)
-
-        tk.Label(team2_players_frame, text="Number:").grid(
-            row=3, column=0, pady=5)
-        number_entry2 = tk.Entry(team2_players_frame)
-        number_entry2.grid(row=3, column=1, pady=5)
-
-        error_label2 = tk.Label(team2_players_frame, text="", fg="red")
-        error_label2.grid(row=4, column=0, columnspan=2, pady=5)
-
-        add_player2_button = tk.Button(
-            team2_players_frame,
-            text="Add Player",
-            command=lambda: add_player_to_team(
-                current_game.get_teams()[1],
-                name_entry2,
-                number_entry2,
-                error_label2,
-                team2_player_listbox
-            )
-        )
-        add_player2_button.grid(row=5, column=0, columnspan=2, pady=5)
-
-        # Continue button
-        nonlocal continue_button
-        continue_button = tk.Button(
-            frame,
-            text="Continue to Game",
-            command=lambda: continue_to_game(frame),
-            state=tk.DISABLED
-        )
-        continue_button.grid(row=1, column=0, columnspan=2, pady=20)
-
-        update_continue_button_state()
-
-        # Show any existing players
-        for player in current_game.get_teams()[0].get_players():
-            team1_player_listbox.insert(
-                tk.END, f"#{player.number:02d} {player.name}")
-        for player in current_game.get_teams()[1].get_players():
-            team2_player_listbox.insert(
-                tk.END, f"#{player.number:02d} {player.name}")
+        update_continue_button_state(continue_button)
+        return frame
 
     return frame, update_player_frame
 
@@ -470,17 +412,11 @@ def show_player_selection(input_frame, event_type, team):
     for player in team.get_players():
         player_listbox.insert(tk.END, f"#{player.number:02d} {player.name}")
 
-    def on_player_selected():
-        selection = player_listbox.curselection()
-        if not selection:
-            messagebox.showerror("Error", "Please select a player")
-            return
-        selected_player = team.get_players()[selection[0]]
-        show_event_confirmation(input_frame, event_type, team, selected_player)
-
     tk.Button(input_frame,
               text="Continue",
-              command=on_player_selected).grid(row=4, column=0, columnspan=2, pady=10)
+              command=lambda: handle_player_selection(
+                  player_listbox, input_frame, event_type, team)).grid(
+        row=4, column=0, columnspan=2, pady=10)
 
 
 def show_event_form(event_type):
@@ -530,33 +466,6 @@ def show_event_form(event_type):
 
     # Display the event form frame
     event_form_frame.grid(row=3, column=0, columnspan=2, pady=10, sticky="ew")
-
-
-def handle_add_event():
-    """Handle adding an event and hide the input form."""
-    event_type = selected_event_type.get()
-    event_content = event_content_entry.get()
-
-    if not event_type or not event_content:
-        messagebox.showerror("Error", "Please fill in all fields.")
-        return
-
-    try:
-        event_content = int(event_content)
-    except ValueError:
-        messagebox.showerror("Error", "Content must be a number.")
-        return
-
-    Scorekeeper.add_event(event_type, event_content)
-    messagebox.showinfo("Success", f"Event '{event_type}' added successfully!")
-
-    # Hide the event form after successful addition
-    event_form_frame.grid_forget()
-
-    # Clear the entry for next use
-    event_content_entry.delete(0, tk.END)
-
-    update_event_list()
 
 
 def setup_start_game_frame():

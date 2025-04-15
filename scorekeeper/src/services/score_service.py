@@ -1,4 +1,3 @@
-from entities.event import Event
 from entities.team import Team
 
 
