@@ -127,21 +127,33 @@ class GameView:
             return
 
         player = team.get_players()[selection[0]]
-        event = Event(event_type, player, team)
-        self._score_service.add_event(event)
-
-        self._update_event_list()
-        self._update_score_display()
         window.destroy()
+        self._show_event_confirmation(event_type, team, player)
 
     def _update_event_list(self):
-        """Update the list of events."""
+        """Update the event list display."""
+        if not self._event_listbox:
+            return
+
+        # Clear current items
         self._event_listbox.delete(0, tk.END)
-        for event in self._score_service.get_events():
-            self._event_listbox.insert(
-                tk.END,
-                f"{event.type} - {event.player.name} ({event.team.name})"
-            )
+
+        # Get and display events
+        events = self._score_service.get_events()
+        print(f"Displaying {len(events)} events")
+
+        for event in events:
+            # Format event text
+            event_text = f"{event.type} - {event.team.name}"
+            if event.player:
+                event_text += f" - {event.player}"
+
+            # Insert at the beginning for reverse chronological order
+            self._event_listbox.insert(0, event_text)
+
+        # Make sure listbox is visible
+        self._event_listbox.update()
+        self._event_listbox.see(0)  # Scroll to most recent event
 
     def _update_score_display(self):
         """Update the score display."""
@@ -149,6 +161,41 @@ class GameView:
         score1 = self._score_service.get_team_score(team1.name)
         score2 = self._score_service.get_team_score(team2.name)
         self._score_label.config(text=f"{score1} - {score2}")
+
+    def _confirm_event(self, dialog, event_type, team, player):
+        """Handle event confirmation.
+
+        Args:
+            dialog: Confirmation dialog window
+            event_type: Type of event
+            team: Team object
+            player: Player object
+        """
+        # Create and add the event
+        event = Event(event_type, player, team)
+
+        try:
+            # Add event and check result
+            result = self._score_service.add_event(event)
+            if result:
+                print(
+                    f"Event saved successfully: {event_type} by {player.name}")
+                dialog.destroy()
+
+                # Force immediate updates
+                # Small delay to ensure database commit
+                self._root.after(100, self._update_event_list)
+                self._root.after(100, self._update_score_display)
+
+                # Verify event list content
+                events = self._score_service.get_events()
+                print(f"Current events in database: {len(events)}")
+            else:
+                print("Failed to save event")
+                messagebox.showerror("Error", "Failed to save event")
+        except Exception as error:
+            print(f"Error during event confirmation: {error}")
+            messagebox.showerror("Error", f"Error saving event: {str(error)}")
 
     def destroy(self):
         """Destroy this view."""

@@ -87,7 +87,7 @@ class GameRepository:
             ) as score
             FROM events
             WHERE game_id = ? AND team_id = ?
-            AND type IN ('2-Pointer', '3-Pointer')""", "Team" is not defined
+            AND type IN ('2-Pointer', '3-Pointer')""",
             (game_id, team_id)
         )
         result = cursor.fetchone()
@@ -148,3 +148,22 @@ class GameRepository:
 
         if self._current_game_id == game_id:
             self._current_game_id = None
+
+    def add_points(self, game_id, team_id, points):
+        """Add points to a team's score in a game.
+        
+        Args:
+            game_id (int): ID of the game
+            team_id (int): ID of the team
+            points (int): Number of points to add
+        """
+        cursor = self._connection.cursor()
+        
+        # Add points through an event
+        cursor.execute(
+            """INSERT INTO events (type, game_id, team_id, timestamp)
+            VALUES (?, ?, ?, ?)""",
+            (f"{points}-Pointer", game_id, team_id, datetime.now().isoformat())
+        )
+        
+        self._connection.commit()

@@ -35,13 +35,13 @@ class ScoreService:
 
         for player in warriors_players:
             self.team_repository.add_player_to_team(team1.name, player)
-        
+
         for player in lakers_players:
             self.team_repository.add_player_to_team(team2.name, player)
 
     def get_teams(self):
         """Get all available teams.
-        
+
         Returns:
             list: List of Team objects
         """
@@ -49,10 +49,10 @@ class ScoreService:
 
     def get_team_players(self, team_name):
         """Get all players in a team.
-        
+
         Args:
             team_name (str): Name of the team
-            
+
         Returns:
             list: List of Player objects
         """
@@ -67,7 +67,7 @@ class ScoreService:
 
         Returns:
             Game: Started game instance
-            
+
         Raises:
             ValueError: If either team doesn't exist
         """
@@ -85,7 +85,7 @@ class ScoreService:
 
     def get_current_game(self):
         """Get current game instance with teams and players.
-        
+
         Returns:
             Game: Current game instance or None
         """
@@ -107,37 +107,48 @@ class ScoreService:
 
         Returns:
             Player: Added player or None if failed
-            
+
         Raises:
             ValueError: If player creation fails
         """
         try:
             player = Player(name, number)
-            success = self.team_repository.add_player_to_team(team.name, player)
+            success = self.team_repository.add_player_to_team(
+                team.name, player)
             return player if success else None
         except ValueError as error:
             raise ValueError(f"Could not add player: {str(error)}")
 
     def add_event(self, event):
         """Add a game event and update scores if needed.
-        
+
         Args:
             event (Event): Event to add
         """
         current_game = self.get_current_game()
         if not current_game:
             raise ValueError("No active game")
-            
-        self.event_repository.add_event(event, current_game.id)
 
-        if event.type == "2-Pointer":
-            self.game_repository.add_points(current_game.id, event.team.id, 2)
-        elif event.type == "3-Pointer":
-            self.game_repository.add_points(current_game.id, event.team.id, 3)
+        # Debug print to trace event creation
+        print(f"Adding event: {event.type} for team {event.team.name}")
+
+        # Try to add the event
+        result = self.event_repository.add_event(event, current_game.id)
+        if not result:
+            print("Failed to add event")
+            return None
+
+        # Update score for scoring events
+        if event.type in ['2-Pointer', '3-Pointer']:
+            points = 2 if event.type == '2-Pointer' else 3
+            self.game_repository.add_points(
+                current_game.id, event.team.id, points)
+
+        return result
 
     def get_events(self):
         """Get all events for current game.
-        
+
         Returns:
             list: List of Event objects
         """
@@ -148,19 +159,19 @@ class ScoreService:
 
     def get_team_score(self, team_name):
         """Get current score for a team.
-        
+
         Args:
             team_name (str): Name of the team
-            
+
         Returns:
             int: Current score
         """
         current_game = self.get_current_game()
         if not current_game:
             return 0
-            
+
         team = self.team_repository.get_team_by_name(team_name)
         if not team:
             return 0
-            
+
         return self.game_repository.get_game_score(current_game.id, team.id)

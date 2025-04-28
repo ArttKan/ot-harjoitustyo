@@ -43,23 +43,26 @@ class TeamRepository:
         try:
             cursor = self._connection.cursor()
             cursor.execute(
-                "INSERT INTO players (name, number, team_id) VALUES (?, ?, (SELECT id FROM teams WHERE name = ?))",
+                """INSERT INTO players (name, number, team_id) 
+                VALUES (?, ?, (SELECT id FROM teams WHERE name = ?))""",
                 (player.name, player.number, team_name)
             )
+
             self._connection.commit()
-            return True
+            player_id = cursor.lastrowid
+            return Player(player.name, player.number, player_id)
         except:
-            return False
+            return None
 
     def get_team_players(self, team_name):
         """Get all players in a team."""
         cursor = self._connection.cursor()
         cursor.execute("""
-            SELECT p.name, p.number 
+            SELECT p.id, p.name, p.number 
             FROM players p 
             JOIN teams t ON p.team_id = t.id 
             WHERE t.name = ?
         """, (team_name,))
         rows = cursor.fetchall()
 
-        return [Player(row["name"], row["number"]) for row in rows]
+        return [Player(row["name"], row["number"], row["id"]) for row in rows]
