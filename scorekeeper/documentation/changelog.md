@@ -9,3 +9,6 @@
 - added team view
 - added score tracking
 - added associating certain events with players and teams
+## Week 6
+- Complete overhaul of the architecture of the program
+- Added a database connection
