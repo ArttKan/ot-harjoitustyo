@@ -1,15 +1,32 @@
+from database.db_connection import db
+from entities.team import Team
+from entities.player import Player
+
+
 class TeamRepository:
     def __init__(self):
-        self.teams = []
+        self._connection = db.get_connection()
 
     def add_team(self, team):
-        """Add a new team to the repository."""
-        self.teams.append(team)
+        """Add a new team to the database."""
+        cursor = self._connection.cursor()
+
+        cursor.execute(
+            "INSERT INTO teams (name) VALUES (?)",
+            (team.name,)
+        )
+
+        self._connection.commit()
         return team
 
     def get_all_teams(self):
-        """Get all teams."""
-        return self.teams
+        """Get all teams from database."""
+        cursor = self._connection.cursor()
+
+        cursor.execute("SELECT id, name FROM teams")
+        rows = cursor.fetchall()
+
+        return [Team(row["name"]) for row in rows]
 
     def get_team_by_name(self, team_name):
         """Get a team by its name."""
