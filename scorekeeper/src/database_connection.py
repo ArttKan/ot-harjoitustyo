@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from config import DATABASE_FILE_PATH
 
@@ -6,6 +7,8 @@ class DatabaseConnection:
     def __init__(self):
         self._connection = None
         self._database_path = DATABASE_FILE_PATH
+
+        os.makedirs(os.path.dirname(self._database_path), exist_ok=True)
 
     def get_database_connection(self):
         """Get database connection."""
@@ -26,11 +29,14 @@ class DatabaseConnection:
         path (str): The new database path"""
         self.close_connection()
         self._database_path = path
+        os.makedirs(os.path.dirname(path), exist_ok=True)
 
 
 _db = DatabaseConnection()
 
 # Public interface
+
+
 def get_database_connection():
     return _db.get_database_connection()
 

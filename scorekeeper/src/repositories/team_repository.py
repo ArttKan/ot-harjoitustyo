@@ -1,11 +1,11 @@
-from database.db_connection import db
+from database_connection import get_database_connection
 from entities.team import Team
 from entities.player import Player
 
 
 class TeamRepository:
     def __init__(self):
-        self._connection = db.get_connection()
+        self._connection = get_database_connection()
 
     def add_team(self, team):
         """Add a new team to the database."""
@@ -30,20 +30,33 @@ class TeamRepository:
 
     def get_team_by_name(self, team_name):
         """Get a team by its name."""
-        for team in self.teams:
-            if team.name == team_name:
-                return team
-        return None
-
-    def add_player_to_team(self, team_name, player):
-        """Add a player to a team."""
-        team = self.get_team_by_name(team_name)
-        if team:
-            team.add_player(player)
+        cursor = self._connection.cursor()
+        cursor.execute(
+            "SELECT id, name FROM teams WHERE name = ?",
+            (team_name,)
+        )
+        row = cursor.fetchone()db_connection
+            cursor.execute(
+                "INSERT INTO players (name, number, team_id) VALUES (?, ?, (SELECT id FROM teams WHERE name = ?))",
+                (player.name, player.number, team_name)
+            )
+            self._connection.commit()
             return True
-        return False
+        except:
+            return False
 
     def get_team_players(self, team_name):
         """Get all players in a team."""
-        team = self.get_team_by_name(team_name)
-        return team.get_players() if team else []
+        cursor = self._connection.cursor()
+        cursor.execute(
+            """
+            SELECT p.name, p.number 
+            FROM players p 
+            JOIN teams t ON p.team_id = t.id 
+            WHERE t.name = ?
+            """,
+            (team_name,)
+        )
+        rows = cursor.fetchall()
+        
+        return [Player(row["name"], row["number"]) for row in rows]
