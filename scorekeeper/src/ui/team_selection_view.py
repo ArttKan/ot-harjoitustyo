@@ -77,9 +77,11 @@ class TeamSelectionView:
             messagebox.showerror("Error", "Please select different teams")
             return
 
-        # Start new game with selected teams
-        self._score_service.start_new_game()
-        self._handle_selection()
+        try:
+            self._score_service.start_new_game(team1, team2)
+            self._handle_selection()
+        except ValueError as error:
+            messagebox.showerror("Error", str(error))
 
     def destroy(self):
         """Destroy this view."""

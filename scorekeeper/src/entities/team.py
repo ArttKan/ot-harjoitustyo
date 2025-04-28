@@ -3,13 +3,25 @@ from entities.player import Player
 
 class Team:
 
-    def __init__(self, name):
-        self.name = name
-        self.players = []
-        self.points = 0
+    def __init__(self, name, team_id=None):
+        self._name = name
+        self._id = team_id
+        self._players = []
 
-    def add_player(self, player: Player):
-        self.players.append(player)
+    @property
+    def name(self):
+        """Get team name."""
+        return self._name
+
+    @property
+    def id(self):
+        """Get team ID."""
+        return self._id
+
+    def add_player(self, player):
+        """Add a player to the team."""
+        self._players.append(player)
 
     def get_players(self):
-        return self.players
+        """Get all players in the team."""
+        return self._players

@@ -1,21 +1,60 @@
-
 class Game:
+    """Class representing a basketball game."""
 
-    def __init__(self):
-        self.home_team = None
-        self.away_team = None
+    def __init__(self, game_id=None):
+        """Initialize a new game."""
+        self._id = game_id
+        self._home_team = None
+        self._away_team = None
 
-    def add_home_team(self, home_team):
-        self.home_team = home_team
+    def add_team(self, team):
+        """Add a team to the game.
 
-    def add_away_team(self, away_team):
-        self.away_team = away_team
+        Args:
+            team: Team to add
 
-    def get_team_names(self):
-        away_team = None
-        if self.away_team:
-            away_team = self.away_team.name
-        return [self.home_team.name, away_team]
+        Returns:
+            bool: True if team was added successfully
+        """
+    @property
+    def id(self):
+        """Get game ID."""
+        return self._id
+
+    def add_team(self, team):
+        """Add a team to the game."""
+        if not self._home_team:
+            self._home_team = team
+            return True
+        elif not self._away_team:
+            self._away_team = team
+            return True
+        return False
 
     def get_teams(self):
-        return [self.home_team, self.away_team]
+        """Get both teams."""
+        return (self._home_team, self._away_team)
+
+    def get_teams(self):
+        """Get both teams in the game.
+
+        Returns:
+            tuple: (home_team, away_team)
+        """
+        return (self._home_team, self._away_team)
+
+    def get_home_team(self):
+        """Get home team.
+
+        Returns:
+            Team: Home team
+        """
+        return self._home_team
+
+    def get_away_team(self):
+        """Get away team.
+
+        Returns:
+            Team: Away team
+        """
+        return self._away_team

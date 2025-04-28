@@ -111,6 +111,48 @@ class PlayerView:
         except ValueError as error:
             messagebox.showerror("Error", str(error))
 
+    def _validate_player(self, name, number):
+        """Validate player input.
+
+        Args:
+            name (str): Player name to validate
+            number (int): Player number to validate
+
+        Returns:
+            tuple: (bool, str) - (is_valid, error_message)
+        """
+        if len(name) < 4 or not all(c.isalpha() or c.isspace() for c in name):
+            return False, "Name must be at least 4 characters long and contain only letters"
+
+        if not any(c.isalpha() for c in name):
+            return False, "Name must contain at least one letter"
+
+        if number < 0 or number > 99:
+            return False, "Number must be between 0 and 99"
+
+        # Check for duplicates
+        current_game = self._score_service.get_current_game()
+        for team in current_game.get_teams():
+            for player in team.get_players():
+                if player.name.lower() == name.lower():
+                    return False, f"Player with name {name} already exists"
+                if player.number == number:
+                    return False, f"Player with number {number} already exists"
+
+        return True, ""
+    
+    def _update_continue_button_state(self):
+        """Enable/disable continue button based on player counts."""
+        current_game = self._score_service.get_current_game()
+        if not current_game:
+            return
+            
+        teams = current_game.get_teams()
+        if not all(len(team.get_players()) > 0 for team in teams):
+            self._continue_button.config(state="disabled")
+        else:
+            self._continue_button.config(state="normal")
+
     def destroy(self):
         """Destroy this view."""
         self._frame.destroy()

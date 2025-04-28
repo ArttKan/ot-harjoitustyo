@@ -1,53 +1,70 @@
 from database_connection import get_database_connection
 from entities.game import Game
 from datetime import datetime
+from entities.team import Team
 
 
 class GameRepository:
     """Repository class for Game entities."""
 
     def __init__(self):
-        """Initialize GameRepository with database connection."""
         self._connection = get_database_connection()
         self._current_game_id = None
 
-    def start_new_game(self, home_team_id, away_team_id):
+    def start_new_game(self, game):
         """Start a new game and store it in database.
 
         Args:
-            home_team_id (int): ID of the home team
-            away_team_id (int): ID of the away team
+            game: Game object containing teams
 
         Returns:
-            int: ID of the created game
+            Game: Started game with ID
         """
         cursor = self._connection.cursor()
+        teams = game.get_teams()
+
+        # Get team IDs if not already set
+        if not teams[0].id:
+            teams[0] = self._get_team_by_name(teams[0].name)
+        if not teams[1].id:
+            teams[1] = self._get_team_by_name(teams[1].name)
 
         cursor.execute(
             """INSERT INTO games (home_team_id, away_team_id, date) 
-               VALUES (?, ?, ?)""",
-            (home_team_id, away_team_id, datetime.now().isoformat())
+            VALUES (?, ?, ?)""",
+            (teams[0].id, teams[1].id, datetime.now().isoformat())
         )
 
         self._connection.commit()
         self._current_game_id = cursor.lastrowid
-        return self._current_game_id
 
-    def get_current_game(self):
-        """Get the current game from database.
+        # Create new game instance with ID
+        game_with_id = Game(game_id=self._current_game_id)
+        game_with_id.add_team(teams[0])
+        game_with_id.add_team(teams[1])
 
-        Returns:
-            tuple: Game data (id, home_team_id, away_team_id, date) or None
-        """
-        if not self._current_game_id:
-            return None
+        return game_with_id
 
+    def _get_team_id(self, team_name):
+        """Get team ID from database."""
+        cursor = self._connection.cursor()
+        cursor.execute("SELECT id FROM teams WHERE name = ?", (team_name,))
+        result = cursor.fetchone()
+        if not result:
+            raise ValueError(f"Team {team_name} not found")
+        return result["id"]
+
+    def _get_team_by_name(self, team_name):
+        """Get team with ID from database."""
         cursor = self._connection.cursor()
         cursor.execute(
-            "SELECT * FROM games WHERE id = ?",
-            (self._current_game_id,)
+            "SELECT id, name FROM teams WHERE name = ?",
+            (team_name,)
         )
-        return cursor.fetchone()
+        row = cursor.fetchone()
+        if not row:
+            raise ValueError(f"Team {team_name} not found")
+        return Team(row["name"], row["id"])
 
     def get_game_score(self, game_id, team_id):
         """Get current score for a team in a game.
@@ -62,7 +79,7 @@ class GameRepository:
         cursor = self._connection.cursor()
         cursor.execute(
             """SELECT SUM(
-                CASE 
+                CASE
                     WHEN type = '2-Pointer' THEN 2
                     WHEN type = '3-Pointer' THEN 3
                     ELSE 0
@@ -70,11 +87,43 @@ class GameRepository:
             ) as score
             FROM events
             WHERE game_id = ? AND team_id = ?
-            AND type IN ('2-Pointer', '3-Pointer')""",
+            AND type IN ('2-Pointer', '3-Pointer')""", "Team" is not defined
             (game_id, team_id)
         )
         result = cursor.fetchone()
         return result["score"] or 0
+
+    def get_current_game(self):
+        """Get the current game from database.
+
+        Returns:
+            Game: Current game instance or None
+        """
+        if not self._current_game_id:
+            return None
+
+        cursor = self._connection.cursor()
+        cursor.execute(
+            """SELECT g.*, 
+                    t1.name as home_team_name,
+                    t2.name as away_team_name
+            FROM games g
+            JOIN teams t1 ON g.home_team_id = t1.id
+            JOIN teams t2 ON g.away_team_id = t2.id
+            WHERE g.id = ?""",
+            (self._current_game_id,)
+        )
+        row = cursor.fetchone()
+
+        if not row:
+            return None
+
+        # Create game with ID
+        game = Game(game_id=row["id"])
+        game.add_team(Team(row["home_team_name"]))
+        game.add_team(Team(row["away_team_name"]))
+
+        return game
 
     def get_all_games(self):
         """Get all games from database.

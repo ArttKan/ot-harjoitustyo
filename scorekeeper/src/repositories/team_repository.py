@@ -17,16 +17,7 @@ class TeamRepository:
         )
 
         self._connection.commit()
-        return team
-
-    def get_all_teams(self):
-        """Get all teams from database."""
-        cursor = self._connection.cursor()
-
-        cursor.execute("SELECT id, name FROM teams")
-        rows = cursor.fetchall()
-
-        return [Team(row["name"]) for row in rows]
+        return Team(team.name, cursor.lastrowid)
 
     def get_team_by_name(self, team_name):
         """Get a team by its name."""
@@ -36,7 +27,16 @@ class TeamRepository:
             (team_name,)
         )
         row = cursor.fetchone()
-        return Team(row["name"]) if row else None
+        return Team(row["name"], row["id"]) if row else None
+
+    def get_all_teams(self):
+        """Get all teams from database."""
+        cursor = self._connection.cursor()
+
+        cursor.execute("SELECT id, name FROM teams")
+        rows = cursor.fetchall()
+
+        return [Team(row["name"], row["id"]) for row in rows]
 
     def add_player_to_team(self, team_name, player):
         """Add a player to a team."""
