@@ -35,7 +35,13 @@ class TeamRepository:
             "SELECT id, name FROM teams WHERE name = ?",
             (team_name,)
         )
-        row = cursor.fetchone()db_connection
+        row = cursor.fetchone()
+        return Team(row["name"]) if row else None
+
+    def add_player_to_team(self, team_name, player):
+        """Add a player to a team."""
+        try:
+            cursor = self._connection.cursor()
             cursor.execute(
                 "INSERT INTO players (name, number, team_id) VALUES (?, ?, (SELECT id FROM teams WHERE name = ?))",
                 (player.name, player.number, team_name)
@@ -48,15 +54,12 @@ class TeamRepository:
     def get_team_players(self, team_name):
         """Get all players in a team."""
         cursor = self._connection.cursor()
-        cursor.execute(
-            """
+        cursor.execute("""
             SELECT p.name, p.number 
             FROM players p 
             JOIN teams t ON p.team_id = t.id 
             WHERE t.name = ?
-            """,
-            (team_name,)
-        )
+        """, (team_name,))
         rows = cursor.fetchall()
-        
+
         return [Player(row["name"], row["number"]) for row in rows]
