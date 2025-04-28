@@ -7,15 +7,6 @@ class Game:
         self._home_team = None
         self._away_team = None
 
-    def add_team(self, team):
-        """Add a team to the game.
-
-        Args:
-            team: Team to add
-
-        Returns:
-            bool: True if team was added successfully
-        """
     @property
     def id(self):
         """Get game ID."""
@@ -30,10 +21,6 @@ class Game:
             self._away_team = team
             return True
         return False
-
-    def get_teams(self):
-        """Get both teams."""
-        return (self._home_team, self._away_team)
 
     def get_teams(self):
         """Get both teams in the game.

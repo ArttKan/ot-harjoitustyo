@@ -2,6 +2,7 @@ import os
 from database_connection import get_database_connection, close_connection
 from config import DATABASE_FILE_PATH
 
+
 def drop_tables(connection):
     """Drops tables if they exist"""
     cursor = connection.cursor()
@@ -10,6 +11,7 @@ def drop_tables(connection):
     cursor.execute('''DROP TABLE IF EXISTS games''')
     cursor.execute('''DROP TABLE IF EXISTS events''')
     connection.commit()
+
 
 def create_tables(connection):
     """Create database tables."""
@@ -64,34 +66,36 @@ def create_tables(connection):
 
     connection.commit()
 
+
 def initialize_database():
     """Initialize the database."""
     try:
         data_dir = os.path.dirname(DATABASE_FILE_PATH)
         print(f"Data directory path: {data_dir}")
         print(f"Data directory exists: {os.path.exists(data_dir)}")
-        
+
         if not os.path.exists(data_dir):
             os.makedirs(data_dir)
             print(f"Created data directory: {data_dir}")
-            
+
         print(f"Full database path will be: {DATABASE_FILE_PATH}")
-        
+
         connection = get_database_connection()
         print("Got database connection successfully")
-        
+
         drop_tables(connection)
         print("Tables dropped successfully")
-        
+
         create_tables(connection)
         print("Tables created successfully")
-        
+
         close_connection()
         print(f"Database initialized successfully at: {DATABASE_FILE_PATH}")
-        
+
     except Exception as error:
         print(f"Error during database initialization: {str(error)}")
         raise
+
 
 if __name__ == "__main__":
     initialize_database()
