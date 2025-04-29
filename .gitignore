@@ -1,5 +1,22 @@
+# Python cache files
 .pytest_cache
 __pycache__
+*.py[cod]
+
+# Coverage reports
 .coverage
 htmlcov
-index-old.py
+
+# Database files
+**/data/*.sqlite
+**/data/*.db
+
+# VSCode settings
+.vscode/
+
+# Virtual environment
+.venv/
+venv/
+
+# ...existing entries...
+data/test-database.sqlite

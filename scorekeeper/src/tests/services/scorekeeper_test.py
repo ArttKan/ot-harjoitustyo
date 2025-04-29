@@ -3,15 +3,21 @@ from src.services.score_service import ScoreService
 from entities.team import Team
 from entities.event import Event
 from entities.player import Player
+from initialize_database import initialize_database
+from database_connection import set_database_path, close_connection
+from config import TEST_DATABASE_FILE_PATH
 
 
 class TestScoreService(unittest.TestCase):
     def setUp(self):
+        set_database_path(TEST_DATABASE_FILE_PATH)
+        initialize_database()
         self.score_service = ScoreService()
         self.test_player = Player("test_player", "13")
         self.test_team1 = Team("test_team1")
         self.test_team2 = Team("test_team2")
         self.test_event = Event("Foul", self.test_player, self.test_team1)
+        self.score_service.start_new_game(self.test_team1.name, self.test_team2.name)
 
     def test_events_after_initialization(self):
         self.assertEqual(self.score_service.get_events(), [])
