@@ -18,8 +18,8 @@ Initially, only a regular user. The possibility to add an admin user later if th
 ### Core Functionality
 - Create a new game (done)  
 - Add/select 2 teams for the game (done)  
-- Add players to the chosen teams (done)
-- Game event input field (done)  
+- Add players to the chosen teams (done) (partially broken at the moment)  
+- Game event input field (done) (fetching and showing game events not working at the moment)  
 - Dropdown menu or similar for selecting the event type (basket/foul/other?) (done)  
 - Depending on the event type, selection of additional data fields (partially done)  
     - For example, basket: 2/3 points, scorer, assister, etc.  
