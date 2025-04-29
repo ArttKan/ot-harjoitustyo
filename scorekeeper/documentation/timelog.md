@@ -8,4 +8,5 @@
 | 8.4. | 3 | Added creating game, fixed team selection problems, added tests and documentation |
 | 15.4. | 5 | Added player input, team view, score tracking, started refining event input, tests and documentation |
 | 28.4. | 7 | Began complete refactoring of the code, baked in the database connection |
-| Sum | 23,5 |
+| 29.4. | 4 | Tests, documentation, cleaning up |
+| Sum | 27,5 |
