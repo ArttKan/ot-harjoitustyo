@@ -1,0 +1,2 @@
+# Use of LLMs in the making of Scorekeeper
+I have used Microsoft Copilot fairly extensively in hte development of the application. Especially the UI and the structure of the application have been aided a lot by Copilot. Also individual smaller bugs and such I often use Copilot to get a hold of.
