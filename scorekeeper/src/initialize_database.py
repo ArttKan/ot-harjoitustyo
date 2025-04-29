@@ -17,7 +17,6 @@ def create_tables(connection):
     """Create database tables."""
     cursor = connection.cursor()
 
-    # Create teams table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS teams (
             id INTEGER PRIMARY KEY,
@@ -25,7 +24,6 @@ def create_tables(connection):
         )
     ''')
 
-    # Create players table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS players (
             id INTEGER PRIMARY KEY,
@@ -37,7 +35,6 @@ def create_tables(connection):
         )
     ''')
 
-    # Create games table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS games (
             id INTEGER PRIMARY KEY,
@@ -49,7 +46,6 @@ def create_tables(connection):
         )
     ''')
 
-    # Create events table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS events (
             id INTEGER PRIMARY KEY,

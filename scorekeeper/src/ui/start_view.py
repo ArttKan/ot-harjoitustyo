@@ -19,7 +19,6 @@ class StartView:
         """Set up the start view layout."""
         self._frame = ttk.Frame(self._root)
 
-        # Title
         title_label = ttk.Label(
             self._frame,
             text="Basketball Scorekeeper",
@@ -27,7 +26,6 @@ class StartView:
         )
         title_label.pack(pady=50)
 
-        # Start button
         start_button = ttk.Button(
             self._frame,
             text="Start New Game",

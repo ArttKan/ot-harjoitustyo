@@ -22,7 +22,6 @@ class PlayerView:
         """Set up the player management view."""
         self._frame = ttk.Frame(self._root)
 
-        # Header
         header_label = ttk.Label(
             self._frame,
             text="Team Players",
@@ -30,7 +29,6 @@ class PlayerView:
         )
         header_label.grid(row=0, column=0, columnspan=3, pady=20)
 
-        # Player list
         player_frame = ttk.LabelFrame(self._frame, text="Current Players")
         player_frame.grid(row=1, column=0, columnspan=3,
                           padx=10, pady=5, sticky="nsew")
@@ -39,7 +37,6 @@ class PlayerView:
         self._player_listbox.pack(padx=10, pady=5)
         self._update_player_list()
 
-        # Add player form
         add_frame = ttk.LabelFrame(self._frame, text="Add New Player")
         add_frame.grid(row=2, column=0, columnspan=3,
                        padx=10, pady=5, sticky="nsew")
@@ -60,7 +57,6 @@ class PlayerView:
             command=lambda: self._add_player(name_entry, number_entry)
         ).grid(row=2, column=0, columnspan=2, pady=10)
 
-        # Navigation buttons
         button_frame = ttk.Frame(self._frame)
         button_frame.grid(row=3, column=0, columnspan=3, pady=20)
 
@@ -97,13 +93,11 @@ class PlayerView:
             if number < 0 or number > 99:
                 raise ValueError("Number must be between 0 and 99")
 
-            # Add player through service
             current_game = self._score_service.get_current_game()
             if current_game:
-                team = current_game.get_teams()[0]  # Add to first team for now
+                team = current_game.get_teams()[0]
                 self._score_service.add_player(team, name, number)
 
-                # Clear entries and update list
                 name_entry.delete(0, tk.END)
                 number_entry.delete(0, tk.END)
                 self._update_player_list()
@@ -130,7 +124,6 @@ class PlayerView:
         if number < 0 or number > 99:
             return False, "Number must be between 0 and 99"
 
-        # Check for duplicates
         current_game = self._score_service.get_current_game()
         for team in current_game.get_teams():
             for player in team.get_players():

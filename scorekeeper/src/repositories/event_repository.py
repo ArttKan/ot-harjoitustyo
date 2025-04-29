@@ -1,6 +1,7 @@
+from datetime import datetime
+import sqlite3
 from database_connection import get_database_connection
 from entities.event import Event
-from datetime import datetime
 from entities.player import Player
 from entities.team import Team
 
@@ -25,10 +26,12 @@ class EventRepository:
         try:
             cursor = self._connection.cursor()
 
-            # Handle events with or without players
             player_id = event.player.id if event.player else None
             print(
-                f"Adding event to database: game_id={game_id}, type={event.type}, team={event.team.name}")
+                "Adding event to database: "
+                f"game_id={game_id}, "
+                f"type={event.type}, "
+                f"team={event.team.name}")
 
             cursor.execute(
                 """INSERT INTO events (type, game_id, player_id, team_id, timestamp)
@@ -44,15 +47,19 @@ class EventRepository:
 
             self._connection.commit()
 
-            # Verify the insert
             cursor.execute("SELECT last_insert_rowid()")
             event_id = cursor.fetchone()[0]
             print(f"Event added with ID: {event_id}")
 
             return event
-        except Exception as error:
-            print(f"Error adding event: {error}")
-            return None
+
+        except sqlite3.IntegrityError as error:
+            print(f"Database constraint violation: {error}")
+            raise
+
+        except sqlite3.Error as error:
+            print(f"Database error: {error}")
+            raise
 
     def get_all_events(self):
         """Get all events from database.
@@ -158,7 +165,6 @@ class EventRepository:
 
         print(f"Fetching events with game_id={game_id}")
 
-        # Get events with all needed data in one query
         cursor.execute(
             """SELECT 
                 e.*,
@@ -175,12 +181,10 @@ class EventRepository:
         )
 
         rows = cursor.fetchall()
-        print(f"Found {len(rows)} events in database")
 
         events = []
         for row in rows:
             try:
-                # Create player if we have player data
                 if row["player_id"]:
                     player = Player(
                         row["player_name"],
@@ -193,13 +197,12 @@ class EventRepository:
                 team = Team(row["team_name"], row["team_id"])
                 event = Event(row["type"], player, team)
                 events.append(event)
-                print(f"Created event: {event.type} for {team.name}")
 
-            except Exception as error:
-                print(f"Error creating event from row: {error}")
+            except KeyError:
+                continue
+            except ValueError:
                 continue
 
-        print(f"Returning {len(events)} events")
         return events
 
     def delete_all(self):

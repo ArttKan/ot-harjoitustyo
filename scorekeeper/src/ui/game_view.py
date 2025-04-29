@@ -25,7 +25,6 @@ class GameView:
         """Set up the game view layout."""
         self._frame = tk.Frame(self._root)
 
-        # Score display
         game_info = tk.Frame(self._frame)
         game_info.grid(row=0, column=0, columnspan=2, pady=10, sticky="ew")
 
@@ -41,7 +40,6 @@ class GameView:
         tk.Label(game_info, text=team2.name, font=("Arial", 14, "bold")).grid(
             row=0, column=2, padx=20)
 
-        # Event type buttons
         event_buttons = tk.Frame(self._frame)
         event_buttons.grid(row=1, column=0, columnspan=2, pady=10)
 
@@ -53,7 +51,6 @@ class GameView:
                     t)
             ).pack(side=tk.LEFT, padx=5)
 
-        # Event list
         tk.Label(self._frame, text="Game Events:", font=("Arial", 12, "bold")).grid(
             row=3, column=0, columnspan=2, pady=(10, 0))
 
@@ -135,25 +132,20 @@ class GameView:
         if not self._event_listbox:
             return
 
-        # Clear current items
         self._event_listbox.delete(0, tk.END)
 
-        # Get and display events
         events = self._score_service.get_events()
         print(f"Displaying {len(events)} events")
 
         for event in events:
-            # Format event text
             event_text = f"{event.type} - {event.team.name}"
             if event.player:
                 event_text += f" - {event.player}"
 
-            # Insert at the beginning for reverse chronological order
             self._event_listbox.insert(0, event_text)
 
-        # Make sure listbox is visible
         self._event_listbox.update()
-        self._event_listbox.see(0)  # Scroll to most recent event
+        self._event_listbox.see(0)
 
     def _update_score_display(self):
         """Update the score display."""
@@ -171,23 +163,18 @@ class GameView:
             team: Team object
             player: Player object
         """
-        # Create and add the event
         event = Event(event_type, player, team)
 
         try:
-            # Add event and check result
             result = self._score_service.add_event(event)
             if result:
                 print(
                     f"Event saved successfully: {event_type} by {player.name}")
                 dialog.destroy()
 
-                # Force immediate updates
-                # Small delay to ensure database commit
                 self._root.after(100, self._update_event_list)
                 self._root.after(100, self._update_score_display)
 
-                # Verify event list content
                 events = self._score_service.get_events()
                 print(f"Current events in database: {len(events)}")
             else:

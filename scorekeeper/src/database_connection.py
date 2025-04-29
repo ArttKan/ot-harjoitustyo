@@ -34,8 +34,6 @@ class DatabaseConnection:
 
 _db = DatabaseConnection()
 
-# Public interface
-
 
 def get_database_connection():
     return _db.get_database_connection()

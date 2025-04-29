@@ -1,3 +1,4 @@
+import sqlite3
 from database_connection import get_database_connection
 from entities.team import Team
 from entities.player import Player
@@ -51,7 +52,11 @@ class TeamRepository:
             self._connection.commit()
             player_id = cursor.lastrowid
             return Player(player.name, player.number, player_id)
-        except:
+        except sqlite3.IntegrityError as error:
+            print(f"Player number already exists in team: {error}")
+            return None
+        except sqlite3.Error as error:
+            print(f"Database error: {error}")
             return None
 
     def get_team_players(self, team_name):

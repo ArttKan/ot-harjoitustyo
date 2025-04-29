@@ -23,7 +23,6 @@ class TeamSelectionView:
         """Set up the team selection view."""
         self._frame = ttk.Frame(self._root)
 
-        # Header
         header_label = ttk.Label(
             self._frame,
             text="Select Teams",
@@ -31,7 +30,6 @@ class TeamSelectionView:
         )
         header_label.grid(row=0, column=0, columnspan=2, pady=20)
 
-        # Team 1 selection
         ttk.Label(self._frame, text="Home Team:").grid(
             row=1, column=0, padx=5, pady=5)
         self._team1_var = tk.StringVar()
@@ -43,7 +41,6 @@ class TeamSelectionView:
         )
         team1_menu.grid(row=1, column=1, padx=5, pady=5)
 
-        # Team 2 selection
         ttk.Label(self._frame, text="Away Team:").grid(
             row=2, column=0, padx=5, pady=5)
         self._team2_var = tk.StringVar()
@@ -55,7 +52,6 @@ class TeamSelectionView:
         )
         team2_menu.grid(row=2, column=1, padx=5, pady=5)
 
-        # Continue button
         ttk.Button(
             self._frame,
             text="Continue",

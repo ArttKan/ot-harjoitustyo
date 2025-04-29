@@ -29,17 +29,6 @@ class PlayerRepository:
         self._connection.commit()
         return Player(player.name, player.number, cursor.lastrowid)
 
-    def find_by_team(self, team_id):
-        """Get all players in a team."""
-        cursor = self._connection.cursor()
-        cursor.execute(
-            "SELECT id, name, number FROM players WHERE team_id = ?",
-            (team_id,)
-        )
-        rows = cursor.fetchall()
-
-        return [Player(row["name"], row["number"], row["id"]) for row in rows]
-
     def find_all(self):
         """Get all players from database.
 

@@ -17,7 +17,7 @@ class Game:
         if not self._home_team:
             self._home_team = team
             return True
-        elif not self._away_team:
+        if not self._away_team:
             self._away_team = team
             return True
         return False

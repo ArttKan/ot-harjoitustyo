@@ -1,7 +1,7 @@
+import sqlite3
 from entities.team import Team
 from entities.game import Game
 from entities.player import Player
-from entities.event import Event
 from repositories.event_repository import EventRepository
 from repositories.game_repository import GameRepository
 from repositories.team_repository import TeamRepository
@@ -17,13 +17,11 @@ class ScoreService:
 
     def _initialize_demo_data(self):
         """Initialize demo data for teams and players."""
-        # Create and add teams
         team1 = Team("Golden State Warriors")
         team2 = Team("Los Angeles Lakers")
         self.team_repository.add_team(team1)
         self.team_repository.add_team(team2)
 
-        # Add players to teams
         warriors_players = [
             Player("Stephen Curry", 30),
             Player("Draymond Green", 23)
@@ -116,8 +114,9 @@ class ScoreService:
             success = self.team_repository.add_player_to_team(
                 team.name, player)
             return player if success else None
-        except ValueError as error:
-            raise ValueError(f"Could not add player: {str(error)}")
+        except sqlite3.IntegrityError:
+            print(f"Player number {number} already exists in team {team.name}")
+            raise
 
     def add_event(self, event):
         """Add a game event and update scores if needed.
@@ -129,16 +128,13 @@ class ScoreService:
         if not current_game:
             raise ValueError("No active game")
 
-        # Debug print to trace event creation
         print(f"Adding event: {event.type} for team {event.team.name}")
 
-        # Try to add the event
         result = self.event_repository.add_event(event, current_game.id)
         if not result:
             print("Failed to add event")
             return None
 
-        # Update score for scoring events
         if event.type in ['2-Pointer', '3-Pointer']:
             points = 2 if event.type == '2-Pointer' else 3
             self.game_repository.add_points(

@@ -1,7 +1,8 @@
+from datetime import datetime
 from database_connection import get_database_connection
 from entities.game import Game
-from datetime import datetime
 from entities.team import Team
+from repositories.team_repository import TeamRepository
 
 
 class GameRepository:
@@ -10,6 +11,7 @@ class GameRepository:
     def __init__(self):
         self._connection = get_database_connection()
         self._current_game_id = None
+        self._team_repository = TeamRepository()
 
     def start_new_game(self, game):
         """Start a new game and store it in database.
@@ -23,11 +25,10 @@ class GameRepository:
         cursor = self._connection.cursor()
         teams = game.get_teams()
 
-        # Get team IDs if not already set
         if not teams[0].id:
-            teams[0] = self._get_team_by_name(teams[0].name)
+            teams[0] = self._team_repository.get_team_by_name(teams[0].name)
         if not teams[1].id:
-            teams[1] = self._get_team_by_name(teams[1].name)
+            teams[1] = self._team_repository.get_team_by_name(teams[1].name)
 
         cursor.execute(
             """INSERT INTO games (home_team_id, away_team_id, date) 
@@ -38,33 +39,11 @@ class GameRepository:
         self._connection.commit()
         self._current_game_id = cursor.lastrowid
 
-        # Create new game instance with ID
         game_with_id = Game(game_id=self._current_game_id)
         game_with_id.add_team(teams[0])
         game_with_id.add_team(teams[1])
 
         return game_with_id
-
-    def _get_team_id(self, team_name):
-        """Get team ID from database."""
-        cursor = self._connection.cursor()
-        cursor.execute("SELECT id FROM teams WHERE name = ?", (team_name,))
-        result = cursor.fetchone()
-        if not result:
-            raise ValueError(f"Team {team_name} not found")
-        return result["id"]
-
-    def _get_team_by_name(self, team_name):
-        """Get team with ID from database."""
-        cursor = self._connection.cursor()
-        cursor.execute(
-            "SELECT id, name FROM teams WHERE name = ?",
-            (team_name,)
-        )
-        row = cursor.fetchone()
-        if not row:
-            raise ValueError(f"Team {team_name} not found")
-        return Team(row["name"], row["id"])
 
     def get_game_score(self, game_id, team_id):
         """Get current score for a team in a game.
@@ -118,7 +97,6 @@ class GameRepository:
         if not row:
             return None
 
-        # Create game with ID
         game = Game(game_id=row["id"])
         game.add_team(Team(row["home_team_name"]))
         game.add_team(Team(row["away_team_name"]))
@@ -151,19 +129,18 @@ class GameRepository:
 
     def add_points(self, game_id, team_id, points):
         """Add points to a team's score in a game.
-        
+
         Args:
             game_id (int): ID of the game
             team_id (int): ID of the team
             points (int): Number of points to add
         """
         cursor = self._connection.cursor()
-        
-        # Add points through an event
+
         cursor.execute(
             """INSERT INTO events (type, game_id, team_id, timestamp)
             VALUES (?, ?, ?, ?)""",
             (f"{points}-Pointer", game_id, team_id, datetime.now().isoformat())
         )
-        
+
         self._connection.commit()

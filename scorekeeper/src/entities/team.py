@@ -1,5 +1,3 @@
-from entities.player import Player
-
 
 class Team:
 
