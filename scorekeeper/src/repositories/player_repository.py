@@ -94,10 +94,3 @@ class PlayerRepository:
         cursor = self._connection.cursor()
         cursor.execute("DELETE FROM players")
         self._connection.commit()
-       cursor.execute(
-            "INSERT INTO players (name, number, team_id) VALUES (?, ?, ?)",
-            (player.name, player.number, team_id)
-        )
-        
-        self._connection.commit()
-        return Player(player.name, player.number, cursor.lastrowid)
