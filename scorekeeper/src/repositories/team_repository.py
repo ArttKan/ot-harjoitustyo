@@ -13,12 +13,29 @@ class TeamRepository:
         cursor = self._connection.cursor()
 
         cursor.execute(
-            "INSERT INTO teams (name) VALUES (?)",
-            (team.name,)
+            "INSERT INTO teams (id, name) VALUES (?, ?)",
+            (team.id, team.name)
         )
 
         self._connection.commit()
-        return Team(team.name, cursor.lastrowid)
+        return Team(team.name)
+
+    def create_team(self, team_name):
+        """Create a new team entity without saving to database.
+
+        Args:
+            team_name (str): Name of the team to create
+
+        Returns:
+            Team: Created team entity without database ID
+
+        Raises:
+            ValueError: If team name is invalid
+        """
+        if not team_name or not isinstance(team_name, str):
+            raise ValueError("Team name must be a non-empty string")
+
+        return Team(team_name)
 
     def get_team_by_name(self, team_name):
         """Get a team by its name."""
@@ -28,7 +45,7 @@ class TeamRepository:
             (team_name,)
         )
         row = cursor.fetchone()
-        return Team(row["name"], row["id"]) if row else None
+        return Team(row["name"]) if row else None
 
     def get_all_teams(self):
         """Get all teams from database."""

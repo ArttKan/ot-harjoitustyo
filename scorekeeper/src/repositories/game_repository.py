@@ -25,10 +25,6 @@ class GameRepository:
         cursor = self._connection.cursor()
         teams = game.get_teams()
 
-        if not teams[0].id:
-            teams[0] = self._team_repository.get_team_by_name(teams[0].name)
-        if not teams[1].id:
-            teams[1] = self._team_repository.get_team_by_name(teams[1].name)
 
         cursor.execute(
             """INSERT INTO games (home_team_id, away_team_id, date) 

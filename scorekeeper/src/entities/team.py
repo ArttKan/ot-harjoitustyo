@@ -1,9 +1,13 @@
+import itertools
+
 
 class Team:
 
-    def __init__(self, name, team_id=None):
+    id_iter = itertools.count()
+
+    def __init__(self, name):
         self._name = name
-        self._id = team_id
+        self._id = next(self.id_iter)
         self._players = []
 
     @property

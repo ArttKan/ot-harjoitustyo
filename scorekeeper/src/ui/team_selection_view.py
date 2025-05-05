@@ -4,19 +4,13 @@ from tkinter import ttk, messagebox
 
 class TeamSelectionView:
     def __init__(self, root, score_service, handle_selection):
-        """Initialize team selection view.
-
-        Args:
-            root: Tkinter root window
-            score_service: ScoreService instance
-            handle_selection: Callback for team selection
-        """
+        """Initialize team selection view."""
         self._root = root
         self._score_service = score_service
         self._handle_selection = handle_selection
         self._frame = None
-        self._team1_var = None
-        self._team2_var = None
+        self._team1_entry = None
+        self._team2_entry = None
         self._initialize()
 
     def _initialize(self):
@@ -25,32 +19,20 @@ class TeamSelectionView:
 
         header_label = ttk.Label(
             self._frame,
-            text="Select Teams",
+            text="Enter Team Names",
             font=("Arial", 16, "bold")
         )
         header_label.grid(row=0, column=0, columnspan=2, pady=20)
 
         ttk.Label(self._frame, text="Home Team:").grid(
             row=1, column=0, padx=5, pady=5)
-        self._team1_var = tk.StringVar()
-        team1_menu = ttk.Combobox(
-            self._frame,
-            textvariable=self._team1_var,
-            values=[team.name for team in self._score_service.get_teams()],
-            state="readonly"
-        )
-        team1_menu.grid(row=1, column=1, padx=5, pady=5)
+        self._team1_entry = ttk.Entry(self._frame)
+        self._team1_entry.grid(row=1, column=1, padx=5, pady=5)
 
         ttk.Label(self._frame, text="Away Team:").grid(
             row=2, column=0, padx=5, pady=5)
-        self._team2_var = tk.StringVar()
-        team2_menu = ttk.Combobox(
-            self._frame,
-            textvariable=self._team2_var,
-            values=[team.name for team in self._score_service.get_teams()],
-            state="readonly"
-        )
-        team2_menu.grid(row=2, column=1, padx=5, pady=5)
+        self._team2_entry = ttk.Entry(self._frame)
+        self._team2_entry.grid(row=2, column=1, padx=5, pady=5)
 
         ttk.Button(
             self._frame,
@@ -62,15 +44,15 @@ class TeamSelectionView:
 
     def _handle_team_selection(self):
         """Validate and process team selection."""
-        team1 = self._team1_var.get()
-        team2 = self._team2_var.get()
+        team1 = self._team1_entry.get().strip()
+        team2 = self._team2_entry.get().strip()
 
         if not team1 or not team2:
-            messagebox.showerror("Error", "Please select both teams")
+            messagebox.showerror("Error", "Please enter both team names")
             return
 
         if team1 == team2:
-            messagebox.showerror("Error", "Please select different teams")
+            messagebox.showerror("Error", "Please enter different team names")
             return
 
         try:
