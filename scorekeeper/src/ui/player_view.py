@@ -119,7 +119,7 @@ class PlayerView:
 
             if not name:
                 raise ValueError("Enter a player name and number")
-            if len(name) > 4:
+            if len(name) < 3:
                 raise ValueError("Player name must be at least 3 characters long")
             test_name = name.replace(" ", "")
             if not test_name.isalpha():
