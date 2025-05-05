@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from repositories.player_repository import PlayerRepository
 
 
 class PlayerView:
@@ -24,12 +25,13 @@ class PlayerView:
 
         header_label = ttk.Label(
             self._frame,
-            text="Team Players",
+            text="Team Rosters",
             font=("Arial", 16, "bold")
         )
         header_label.grid(row=0, column=0, columnspan=3, pady=20)
 
-        player_frame = ttk.LabelFrame(self._frame, text="Current Players")
+        # Player list frame
+        player_frame = ttk.LabelFrame(self._frame)
         player_frame.grid(row=1, column=0, columnspan=3,
                           padx=10, pady=5, sticky="nsew")
 
@@ -37,34 +39,57 @@ class PlayerView:
         self._player_listbox.pack(padx=10, pady=5)
         self._update_player_list()
 
+        # Add player frame
         add_frame = ttk.LabelFrame(self._frame, text="Add New Player")
         add_frame.grid(row=2, column=0, columnspan=3,
                        padx=10, pady=5, sticky="nsew")
 
-        ttk.Label(add_frame, text="Name:").grid(
+        # Team dropdown
+        ttk.Label(add_frame, text="Team:").grid(
             row=0, column=0, padx=5, pady=5)
-        name_entry = ttk.Entry(add_frame)
-        name_entry.grid(row=0, column=1, padx=5, pady=5)
+        self._team_var = tk.StringVar()
+        team_dropdown = ttk.Combobox(
+            add_frame,
+            textvariable=self._team_var,
+            state="readonly"
+        )
+        current_game = self._score_service.get_current_game()
+        if current_game:
+            teams = current_game.get_teams()
+            team_dropdown['values'] = [team.name for team in teams]
+            if teams:
+                team_dropdown.set(teams[0].name)
+        team_dropdown.grid(row=0, column=1, padx=5, pady=5)
 
-        ttk.Label(add_frame, text="Number:").grid(
+        # Player name input
+        ttk.Label(add_frame, text="Name (A-Z and spaces):").grid(
             row=1, column=0, padx=5, pady=5)
-        number_entry = ttk.Entry(add_frame)
-        number_entry.grid(row=1, column=1, padx=5, pady=5)
+        name_entry = ttk.Entry(add_frame)
+        name_entry.grid(row=1, column=1, padx=5, pady=5)
 
+        # Player number input
+        ttk.Label(add_frame, text="Number (0-99):").grid(
+            row=2, column=0, padx=5, pady=5)
+        number_entry = ttk.Entry(add_frame)
+        number_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        # Add button
         ttk.Button(
             add_frame,
             text="Add Player",
             command=lambda: self._add_player(name_entry, number_entry)
-        ).grid(row=2, column=0, columnspan=2, pady=10)
+        ).grid(row=3, column=0, columnspan=2, pady=10)
 
+        # Navigation buttons
         button_frame = ttk.Frame(self._frame)
         button_frame.grid(row=3, column=0, columnspan=3, pady=20)
 
-        ttk.Button(
+        self._continue_button = ttk.Button(
             button_frame,
             text="Continue to Game",
             command=self._handle_next
-        ).pack(side=tk.RIGHT, padx=5)
+        )
+        self._continue_button.pack(side=tk.RIGHT, padx=5)
 
         self._frame.pack(padx=20, pady=20)
 
@@ -83,24 +108,37 @@ class PlayerView:
                 self._player_listbox.insert(tk.END, "")
 
     def _add_player(self, name_entry, number_entry):
-        """Add a new player to the team."""
+        """Add a new player to the selected team."""
         try:
             name = name_entry.get().strip()
-            number = int(number_entry.get().strip())
+            try:
+                number = int(number_entry.get().strip())
+            except:
+                raise ValueError("Enter a valid number as player number")
+            selected_team = self._team_var.get()
 
             if not name:
-                raise ValueError("Name cannot be empty")
+                raise ValueError("Enter a player name and number")
+            if len(name) > 4:
+                raise ValueError("Player name must be at least 3 characters long")
+            test_name = name.replace(" ", "")
+            if not test_name.isalpha():
+                raise ValueError(
+                    "Only alphabetical characters and spaces allowed in player names")
+            if not number:
+                raise ValueError("Enter a player name and number")
             if number < 0 or number > 99:
                 raise ValueError("Number must be between 0 and 99")
 
             current_game = self._score_service.get_current_game()
             if current_game:
-                team = current_game.get_teams()[0]
-                self._score_service.add_player(team, name, number)
-
-                name_entry.delete(0, tk.END)
-                number_entry.delete(0, tk.END)
-                self._update_player_list()
+                team = next((t for t in current_game.get_teams()
+                            if t.name == selected_team), None)
+                if team:
+                    self._score_service.add_player(team, name, number)
+                    name_entry.delete(0, tk.END)
+                    number_entry.delete(0, tk.END)
+                    self._update_player_list()
 
         except ValueError as error:
             messagebox.showerror("Error", str(error))
@@ -133,13 +171,13 @@ class PlayerView:
                     return False, f"Player with number {number} already exists"
 
         return True, ""
-    
+
     def _update_continue_button_state(self):
         """Enable/disable continue button based on player counts."""
         current_game = self._score_service.get_current_game()
         if not current_game:
             return
-            
+
         teams = current_game.get_teams()
         if not all(len(team.get_players()) > 0 for team in teams):
             self._continue_button.config(state="disabled")
