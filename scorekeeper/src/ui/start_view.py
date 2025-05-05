@@ -21,7 +21,7 @@ class StartView:
 
         title_label = ttk.Label(
             self._frame,
-            text="Basketball Scorekeeper",
+            text="Scorekeeper",
             font=("Arial", 24, "bold")
         )
         title_label.pack(pady=50)

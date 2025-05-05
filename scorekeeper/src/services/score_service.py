@@ -13,29 +13,10 @@ class ScoreService:
         self.event_repository = EventRepository()
         self.game_repository = GameRepository()
         self.team_repository = TeamRepository()
-    #     self._initialize_demo_data()
 
-    # def _initialize_demo_data(self):
-    #     """Initialize demo data for teams and players."""
-    #     team1 = Team("Golden State Warriors")
-    #     team2 = Team("Los Angeles Lakers")
-    #     self.team_repository.add_team(team1)
-    #     self.team_repository.add_team(team2)
-
-    #     warriors_players = [
-    #         Player("Stephen Curry", 30),
-    #         Player("Draymond Green", 23)
-    #     ]
-    #     lakers_players = [
-    #         Player("LeBron James", 6),
-    #         Player("Anthony Davis", 3)
-    #     ]
-
-    #     for player in warriors_players:
-    #         self.team_repository.add_player_to_team(team1.name, player)
-
-    #     for player in lakers_players:
-    #         self.team_repository.add_player_to_team(team2.name, player)
+    def get_team_by_name(self, team):
+        team = self.team_repository.get_team_by_name(team)
+        return team
 
     def get_teams(self):
         """Get all available teams.
@@ -71,7 +52,6 @@ class ScoreService:
         """
         team1 = self.team_repository.create_team(team1_name)
         team2 = self.team_repository.create_team(team2_name)
-        print(team1.id, team2.id)
         self.team_repository.add_team(team1)
         self.team_repository.add_team(team2)
 

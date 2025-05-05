@@ -30,7 +30,6 @@ class PlayerView:
         )
         header_label.grid(row=0, column=0, columnspan=3, pady=20)
 
-        # Player list frame
         player_frame = ttk.LabelFrame(self._frame)
         player_frame.grid(row=1, column=0, columnspan=3,
                           padx=10, pady=5, sticky="nsew")
@@ -39,12 +38,10 @@ class PlayerView:
         self._player_listbox.pack(padx=10, pady=5)
         self._update_player_list()
 
-        # Add player frame
         add_frame = ttk.LabelFrame(self._frame, text="Add New Player")
         add_frame.grid(row=2, column=0, columnspan=3,
                        padx=10, pady=5, sticky="nsew")
 
-        # Team dropdown
         ttk.Label(add_frame, text="Team:").grid(
             row=0, column=0, padx=5, pady=5)
         self._team_var = tk.StringVar()
@@ -61,26 +58,22 @@ class PlayerView:
                 team_dropdown.set(teams[0].name)
         team_dropdown.grid(row=0, column=1, padx=5, pady=5)
 
-        # Player name input
         ttk.Label(add_frame, text="Name (A-Z and spaces):").grid(
             row=1, column=0, padx=5, pady=5)
         name_entry = ttk.Entry(add_frame)
         name_entry.grid(row=1, column=1, padx=5, pady=5)
 
-        # Player number input
         ttk.Label(add_frame, text="Number (0-99):").grid(
             row=2, column=0, padx=5, pady=5)
         number_entry = ttk.Entry(add_frame)
         number_entry.grid(row=2, column=1, padx=5, pady=5)
 
-        # Add button
         ttk.Button(
             add_frame,
             text="Add Player",
             command=lambda: self._add_player(name_entry, number_entry)
         ).grid(row=3, column=0, columnspan=2, pady=10)
 
-        # Navigation buttons
         button_frame = ttk.Frame(self._frame)
         button_frame.grid(row=3, column=0, columnspan=3, pady=20)
 
@@ -90,6 +83,8 @@ class PlayerView:
             command=self._handle_next
         )
         self._continue_button.pack(side=tk.RIGHT, padx=5)
+
+        self._update_continue_button_state()
 
         self._frame.pack(padx=20, pady=20)
 
@@ -113,22 +108,17 @@ class PlayerView:
             name = name_entry.get().strip()
             try:
                 number = int(number_entry.get().strip())
-            except:
+            except ValueError:
                 raise ValueError("Enter a valid number as player number")
+                
             selected_team = self._team_var.get()
+            if not selected_team:
+                raise ValueError("Select a team first")
 
-            if not name:
-                raise ValueError("Enter a player name and number")
-            if len(name) < 3:
-                raise ValueError("Player name must be at least 3 characters long")
-            test_name = name.replace(" ", "")
-            if not test_name.isalpha():
-                raise ValueError(
-                    "Only alphabetical characters and spaces allowed in player names")
-            if not number:
-                raise ValueError("Enter a player name and number")
-            if number < 0 or number > 99:
-                raise ValueError("Number must be between 0 and 99")
+            # Use the validation function
+            is_valid, error_message = self._validate_player(name, number, selected_team)
+            if not is_valid:
+                raise ValueError(error_message)
 
             current_game = self._score_service.get_current_game()
             if current_game:
@@ -139,11 +129,12 @@ class PlayerView:
                     name_entry.delete(0, tk.END)
                     number_entry.delete(0, tk.END)
                     self._update_player_list()
+                    self._update_continue_button_state()
 
         except ValueError as error:
             messagebox.showerror("Error", str(error))
 
-    def _validate_player(self, name, number):
+    def _validate_player(self, name, number, team_name):
         """Validate player input.
 
         Args:
@@ -153,18 +144,24 @@ class PlayerView:
         Returns:
             tuple: (bool, str) - (is_valid, error_message)
         """
-        if len(name) < 4 or not all(c.isalpha() or c.isspace() for c in name):
-            return False, "Name must be at least 4 characters long and contain only letters"
+        if not name:
+            return False, "Enter a player name and number"
 
-        if not any(c.isalpha() for c in name):
-            return False, "Name must contain at least one letter"
+        if len(name) < 3:
+            return False, "Player name must be at least 3 characters long"
+
+        test_name = name.replace(" ", "")
+        if not test_name.isalpha():
+            return False, "Only alphabetical characters and spaces allowed in player names"
+
+        if not number:
+            return False, "Enter a player name and number"
 
         if number < 0 or number > 99:
             return False, "Number must be between 0 and 99"
-
         current_game = self._score_service.get_current_game()
-        for team in current_game.get_teams():
-            for player in team.get_players():
+        if current_game:
+            for player in self._score_service.get_team_players(team_name):
                 if player.name.lower() == name.lower():
                     return False, f"Player with name {name} already exists"
                 if player.number == number:

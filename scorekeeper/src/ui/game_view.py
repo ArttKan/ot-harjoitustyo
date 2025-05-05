@@ -26,7 +26,8 @@ class GameView:
         self._frame = tk.Frame(self._root)
 
         game_info = tk.Frame(self._frame)
-        game_info.grid(row=0, column=0, columnspan=2, pady=10, sticky="ew")
+        game_info.grid(row=0, column=0, columnspan=3, pady=10)
+        game_info.grid_columnconfigure(1, weight=1)
 
         team1, team2 = self._score_service.get_current_game().get_teams()
 

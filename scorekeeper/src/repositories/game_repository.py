@@ -35,7 +35,7 @@ class GameRepository:
         self._connection.commit()
         self._current_game_id = cursor.lastrowid
 
-        game_with_id = Game(game_id=self._current_game_id)
+        game_with_id = Game()
         game_with_id.add_team(teams[0])
         game_with_id.add_team(teams[1])
 
