@@ -1,5 +1,4 @@
 import sqlite3
-from entities.team import Team
 from entities.game import Game
 from entities.player import Player
 from repositories.event_repository import EventRepository
@@ -110,8 +109,6 @@ class ScoreService:
         current_game = self.get_current_game()
         if not current_game:
             raise ValueError("No active game")
-
-        print(f"Adding event: {event.type} for team {event.team.name}")
 
         result = self.event_repository.add_event(event, current_game.id)
         if not result:

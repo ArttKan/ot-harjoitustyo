@@ -27,11 +27,6 @@ class EventRepository:
             cursor = self._connection.cursor()
 
             player_id = event.player.id if event.player else None
-            print(
-                "Adding event to database: "
-                f"game_id={game_id}, "
-                f"type={event.type}, "
-                f"team={event.team.name}")
 
             cursor.execute(
                 """INSERT INTO events (type, game_id, player_id, team_id, timestamp)
@@ -48,8 +43,6 @@ class EventRepository:
             self._connection.commit()
 
             cursor.execute("SELECT last_insert_rowid()")
-            event_id = cursor.fetchone()[0]
-            print(f"Event added with ID: {event_id}")
 
             return event
 
@@ -162,8 +155,6 @@ class EventRepository:
         """
 
         cursor = self._connection.cursor()
-
-        print(f"Fetching events with game_id={game_id}")
 
         cursor.execute(
             """SELECT 

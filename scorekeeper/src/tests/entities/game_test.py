@@ -5,8 +5,8 @@ from src.entities.game import Game
 
 class TestGame(unittest.TestCase):
     def setUp(self):
-        self.test_team1 = Team("test_team1")
-        self.test_team2 = Team("test_team2")
+        self.test_team1 = Team("test_team1", 1)
+        self.test_team2 = Team("test_team2", 2)
         self.test_game = Game(1)
         self.test_game.add_team(self.test_team1)
         self.test_game.add_team(self.test_team2)
@@ -31,7 +31,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(self.test_team2, self.test_game.get_away_team())
 
     def test_adding_third_team(self):
-        self.test_team3 = Team("test_team3")
+        self.test_team3 = Team("test_team3", 3)
         self.assertEqual(self.test_game.add_team(self.test_team3), False)
 
     def test_get_game_id(self):

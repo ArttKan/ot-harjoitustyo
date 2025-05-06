@@ -115,7 +115,6 @@ class PlayerView:
             if not selected_team:
                 raise ValueError("Select a team first")
 
-            # Use the validation function
             is_valid, error_message = self._validate_player(name, number, selected_team)
             if not is_valid:
                 raise ValueError(error_message)

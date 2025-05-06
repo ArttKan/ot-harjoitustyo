@@ -1,9 +1,9 @@
 
 class Team:
 
-    def __init__(self, name, id):
+    def __init__(self, name, team_id):
         self._name = name
-        self._id = id
+        self._id = team_id
         self._players = []
 
     @property

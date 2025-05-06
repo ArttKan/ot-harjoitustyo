@@ -55,7 +55,13 @@ class GameView:
         tk.Label(self._frame, text="Game Events:", font=("Arial", 12, "bold")).grid(
             row=3, column=0, columnspan=2, pady=(10, 0))
 
-        self._event_listbox = tk.Listbox(self._frame, width=50, height=15)
+        self._event_listbox = tk.Listbox(
+            self._frame, 
+            width=50, 
+            height=15,
+            justify='center',  # Center the text
+            font=("Arial", 10)  # Optional: set a consistent font
+        )
         self._event_listbox.grid(row=4, column=0, columnspan=2, pady=10)
 
         end_game_button = tk.Button(
@@ -142,15 +148,10 @@ class GameView:
             return
 
         self._event_listbox.delete(0, tk.END)
-
         events = self._score_service.get_events()
-        print(f"Displaying {len(events)} events")
 
         for event in events:
-            event_text = f"{event.type} - {event.team.name}"
-            if event.player:
-                event_text += f" - {event.player}"
-
+            event_text = f"{event.type} - {event.player} - {event.team.name}"
             self._event_listbox.insert(0, event_text)
 
         self._event_listbox.update()
@@ -177,15 +178,10 @@ class GameView:
         try:
             result = self._score_service.add_event(event)
             if result:
-                print(
-                    f"Event saved successfully: {event_type} by {player.name}")
                 dialog.destroy()
 
                 self._root.after(100, self._update_event_list)
                 self._root.after(100, self._update_score_display)
-
-                events = self._score_service.get_events()
-                print(f"Current events in database: {len(events)}")
             else:
                 print("Failed to save event")
                 messagebox.showerror("Error", "Failed to save event")
@@ -208,14 +204,12 @@ class GameView:
         final_window.title("The Game Has Ended")
         final_window.geometry("350x300")
         
-        # Final score header
         tk.Label(
             final_window,
             text="Final Score",
             font=("Arial", 16, "bold")
         ).pack(pady=10)
         
-        # Team scores
         tk.Label(
             final_window,
             text=f"{team1.name}",
@@ -234,7 +228,6 @@ class GameView:
             font=("Arial", 12)
         ).pack()
         
-        # Exit button
         tk.Button(
             final_window,
             text="Exit",

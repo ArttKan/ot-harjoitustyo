@@ -19,7 +19,7 @@ class Game:
             return True
         if not self._away_team:
             self._away_team = team
-        return True
+            return True
         return False
 
     def get_teams(self):
