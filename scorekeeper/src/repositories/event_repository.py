@@ -167,16 +167,19 @@ class EventRepository:
 
         cursor.execute(
             """SELECT 
-                e.*,
-                t.name as team_name,
-                t.id as team_id,
-                p.name as player_name,
-                p.number as player_number
-            FROM events e
-            JOIN teams t ON e.team_id = t.id
-            LEFT JOIN players p ON e.player_id = p.id
-            WHERE e.game_id = ?
-            ORDER BY e.timestamp DESC""",
+                events.id AS event_id,
+                events.type AS event_type,
+                events.timestamp AS event_time,
+                players.id AS player_id,
+                players.name AS player_name,
+                players.number AS player_number,
+                teams.id AS team_id,
+                teams.name AS team_name
+                FROM events
+                JOIN players ON events.player_id = players.id
+                JOIN teams ON players.team_id = teams.id
+                WHERE events.game_id = ?
+                ORDER BY events.timestamp""",
             (game_id,)
         )
 
@@ -195,7 +198,7 @@ class EventRepository:
                     player = None
 
                 team = Team(row["team_name"], row["team_id"])
-                event = Event(row["type"], player, team)
+                event = Event(row["event_type"], player, team)
                 events.append(event)
 
             except KeyError:

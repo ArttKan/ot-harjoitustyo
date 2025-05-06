@@ -81,7 +81,9 @@ class GameRepository:
         cursor.execute(
             """SELECT g.*, 
                     t1.name as home_team_name,
-                    t2.name as away_team_name
+                    t2.name as away_team_name,
+                    t1.id as home_team_id,
+                    t2.id as away_team_id
             FROM games g
             JOIN teams t1 ON g.home_team_id = t1.id
             JOIN teams t2 ON g.away_team_id = t2.id
@@ -94,8 +96,8 @@ class GameRepository:
             return None
 
         game = Game(game_id=row["id"])
-        game.add_team(Team(row["home_team_name"]))
-        game.add_team(Team(row["away_team_name"]))
+        game.add_team(Team(row["home_team_name"], row["home_team_id"]))
+        game.add_team(Team(row["away_team_name"], row["away_team_id"]))
 
         return game
 
@@ -122,21 +124,3 @@ class GameRepository:
 
         if self._current_game_id == game_id:
             self._current_game_id = None
-
-    def add_points(self, game_id, team_id, points):
-        """Add points to a team's score in a game.
-
-        Args:
-            game_id (int): ID of the game
-            team_id (int): ID of the team
-            points (int): Number of points to add
-        """
-        cursor = self._connection.cursor()
-
-        cursor.execute(
-            """INSERT INTO events (type, game_id, team_id, timestamp)
-            VALUES (?, ?, ?, ?)""",
-            (f"{points}-Pointer", game_id, team_id, datetime.now().isoformat())
-        )
-
-        self._connection.commit()

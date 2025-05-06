@@ -18,9 +18,9 @@ class TeamRepository:
         )
 
         self._connection.commit()
-        return Team(team.name)
+        return Team(team.name, team.id)
 
-    def create_team(self, team_name):
+    def create_team(self, team_name, team_id):
         """Create a new team entity without saving to database.
 
         Args:
@@ -35,7 +35,7 @@ class TeamRepository:
         if not team_name or not isinstance(team_name, str):
             raise ValueError("Team name must be a non-empty string")
 
-        return Team(team_name)
+        return Team(team_name, team_id)
 
     def get_team_by_name(self, team_name):
         """Get a team by its name."""
@@ -45,7 +45,7 @@ class TeamRepository:
             (team_name,)
         )
         row = cursor.fetchone()
-        return Team(row["name"]) if row else None
+        return Team(row["name"], row["id"]) if row else None
 
     def get_all_teams(self):
         """Get all teams from database."""

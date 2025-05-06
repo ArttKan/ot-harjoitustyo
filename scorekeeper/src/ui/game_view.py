@@ -58,6 +58,14 @@ class GameView:
         self._event_listbox = tk.Listbox(self._frame, width=50, height=15)
         self._event_listbox.grid(row=4, column=0, columnspan=2, pady=10)
 
+        end_game_button = tk.Button(
+            self._frame,
+            text="End Game",
+            command=self._show_final_score,
+            font=("Arial", 12)
+        )
+        end_game_button.grid(row=5, column=0, columnspan=2, pady=10)
+
         self._frame.pack(pady=20)
 
     def _handle_event_type_selection(self, event_type):
@@ -188,3 +196,48 @@ class GameView:
     def destroy(self):
         """Destroy this view."""
         self._frame.destroy()
+
+
+    def _show_final_score(self):
+        """Show final score popup and exit option."""
+        team1, team2 = self._score_service.get_current_game().get_teams()
+        score1 = self._score_service.get_team_score(team1.name)
+        score2 = self._score_service.get_team_score(team2.name)
+        
+        final_window = tk.Toplevel(self._root)
+        final_window.title("The Game Has Ended")
+        final_window.geometry("350x300")
+        
+        # Final score header
+        tk.Label(
+            final_window,
+            text="Final Score",
+            font=("Arial", 16, "bold")
+        ).pack(pady=10)
+        
+        # Team scores
+        tk.Label(
+            final_window,
+            text=f"{team1.name}",
+            font=("Arial", 12)
+        ).pack()
+        
+        tk.Label(
+            final_window,
+            text=f"{score1} - {score2}",
+            font=("Arial", 24, "bold")
+        ).pack(pady=10)
+        
+        tk.Label(
+            final_window,
+            text=f"{team2.name}",
+            font=("Arial", 12)
+        ).pack()
+        
+        # Exit button
+        tk.Button(
+            final_window,
+            text="Exit",
+            command=self._root.destroy,
+            font=("Arial", 12),
+        ).pack(pady=20)

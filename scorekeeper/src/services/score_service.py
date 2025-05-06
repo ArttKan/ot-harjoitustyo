@@ -50,8 +50,8 @@ class ScoreService:
         Raises:
             ValueError: If either team doesn't exist
         """
-        team1 = self.team_repository.create_team(team1_name)
-        team2 = self.team_repository.create_team(team2_name)
+        team1 = self.team_repository.create_team(team1_name, 1)
+        team2 = self.team_repository.create_team(team2_name, 2)
         self.team_repository.add_team(team1)
         self.team_repository.add_team(team2)
 
@@ -117,11 +117,6 @@ class ScoreService:
         if not result:
             print("Failed to add event")
             return None
-
-        if event.type in ['2-Pointer', '3-Pointer']:
-            points = 2 if event.type == '2-Pointer' else 3
-            self.game_repository.add_points(
-                current_game.id, event.team.id, points)
 
         return result
 
