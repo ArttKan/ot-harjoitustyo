@@ -1,9 +1,9 @@
 class Game:
     """Class representing a basketball game."""
 
-    def __init__(self):
+    def __init__(self, game_id=1):
         """Initialize a new game."""
-        self._id = 1
+        self._id = game_id
         self._home_team = None
         self._away_team = None
 

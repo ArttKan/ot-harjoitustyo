@@ -10,7 +10,7 @@ class GameRepository:
 
     def __init__(self):
         self._connection = get_database_connection()
-        self._current_game_id = None
+        self._current_game_id = 1
         self._team_repository = TeamRepository()
 
     def start_new_game(self, game):
