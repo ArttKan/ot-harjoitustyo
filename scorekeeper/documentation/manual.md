@@ -14,17 +14,29 @@ Run the application with:
 Simply click the "Start New Game"-button to begin.  
 ![Start](./images/start.png)  
 ### Select Teams for the Game
-Then select two different teams to play in the game.  
+Then enter the names for two teams to play in the game.  
 ![Teams](./images/teams.png)  
 ### Add Players to the Teams
 Next you can add players to the chosen teams.  
 ![Players](./images/players.png)  
+### Main Event Input View
+Now you are taken to the main event view.  
+![Event1](./images/events1.png)  
 ### Inputting Events 1
-In the final event input view you begin by choosing the type of event and the team associated with it.  
-![Event1](./images/event1.png)  
+In this final event input view you begin by choosing the type of event and the team associated with it.  
+![Event2](./images/events2.png)  
 ### Inputting Events 2
 Next choose the player associated with the event.  
-![Event2](./images/event2.png)  
+![Event3](./images/events3.png)  
 ### Inputting Events 3
 Finally confirm the input of the event with the chosen data.  
-![Event3](./images/event3.png)  
+![Event4](./images/events4.png)  
+### Inputting Events 4
+Now you can see the newly input event in the "Game Events" list.  
+![Event5](./images/event5.png)  
+### Ending the Game
+When the game has run its course and all the events have been input, you can click the "End Game"-button at the bottom of the view to end the game.  
+![End1](./images/end1.png)  
+### Exiting the Application
+In the final pop up window you can see the final score for the game you have just recorded. Clicking the "Exit" button closes the application.  
+![End2](./images/end2.png)  

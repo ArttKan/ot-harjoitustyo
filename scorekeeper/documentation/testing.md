@@ -11,9 +11,9 @@ Most of the integration level testing is done through score_service_test.py. The
 ## System testing and UI
 
 ### Installation
-The application has been tested to work when cloned from the GitHub repository and set up according to the .[manual](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/documentation/manual.md). This has only been verified on Linux.  
+The application has been tested to work when cloned from the GitHub repository and set up according to the [manual](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/documentation/manual.md). This has only been verified on Linux.  
 
 The application is not designed to make use of any prior data in the database, so the cleaning and setting up of the database prior to every execution of it is essential.
 
 ### Functionalities
-System testing of the functionalities of the application has been done manually. All the available functionalities (as laid out in the .[requirement specification](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/documentation/architecture.md)) have been tested to work and also handle incorrect use and invalid entries well.
+System testing of the functionalities of the application has been done manually. All the available functionalities (as laid out in the [requirement specification](https://github.com/ArttKan/ot-harjoitustyo/blob/main/scorekeeper/documentation/architecture.md)) have been tested to work and also handle incorrect use and invalid entries well.
