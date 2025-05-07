@@ -1,33 +1,23 @@
 # Requirement specification
 ## Purpose of the Application
 
-A so-called scorekeeping application for imaginary basketball games. The purpose is to document a hypothetical basketball game through game events, such as baskets and fouls. The user will input a game event and some data associated with it, which will then be recorded under the ongoing game.
-
-## Users
-
-Initially, only a regular user. The possibility to add an admin user later if the application development calls for it.
+A so-called scorekeeping application for imaginary basketball games. The purpose is to document a hypothetical basketball game through game events, such as baskets and fouls. The user will input a game event specifying its type, and the team and player associated with it, which will then be recorded under the ongoing game. The input events can be viewed in the recorded events list and the events affecting the game score will be recorded in the score tracker. The final score will also be displayed when the game is ended.
 
 ## Basic Functionality
 
-### Users
-- Create a new user account
-- Login
-- Delete user account
-- Logout
-
 ### Core Functionality
-- Create a new game (done)  
-- Add/select 2 teams for the game (done)  
-- Add players to the chosen teams (done) (partially broken at the moment)  
-- Game event input field (done) (fetching and showing game events not working at the moment)  
-- Dropdown menu or similar for selecting the event type (basket/foul/other?) (done)  
-- Depending on the event type, selection of additional data fields (partially done)  
-    - For example, basket: 2/3 points, scorer, assister, etc.  
-    - For example, foul: fouled player, fouling player, type of foul, etc.  
-- Some kind of permanent view of the game's current status (teams, scores, team fouls) (partially done)  
-- End the game  
+- Create a new game  
+- Add 2 teams for the game  
+- Add players to the chosen teams  
+- Game event input  
+- Selection dialogue for the event type:  
+    - type: 2-point basket, 3-point basket, foul, technical foul, rebound  
+    - the team of the player committing the event  
+    - the player from that team committing the event  
+- A score tracker at the top of the main event input view that shows the current score of the game  
+- "End game"-button, which displays the final score of the game and then gives an option to exit the application  
 
 ### Future Development Ideas
-- Include all game events as input options (rebounds, turnovers, etc.)
-- More data input for already implemented events
-- Add/select 5-11 players to a team
+- More sophisticated tracking and display of the game state beyond just score
+- More data input for already implemented events, such as free throws from fouls, assists with baskets
+- Removing players from teams in the player input view

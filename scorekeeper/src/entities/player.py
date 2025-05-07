@@ -30,4 +30,4 @@ class Player:
 
     def __str__(self):
         """String representation of the player."""
-        return f"#{self._number:02d} {self._name}"
+        return f"{self._number} {self._name}"

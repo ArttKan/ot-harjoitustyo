@@ -12,3 +12,7 @@
 ## Week 6
 - Complete overhaul of the architecture of the program
 - Added a database connection
+## Week 7
+- Removed demo teams and players, added player and team input
+- fixed event list and score tracking
+- added an end game button and screen

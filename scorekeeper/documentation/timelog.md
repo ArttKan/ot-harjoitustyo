@@ -10,5 +10,6 @@
 | 28.4. | 7 | Began complete refactoring of the code, baked in the database connection |
 | 29.4. | 4 | Tests, documentation, cleaning up |
 | 5.5. | 4,5 | Finalising player and team input |
-| 6.5. | 4 | Refining the event view and scorekeeping |
-| Sum | 36 |
+| 6.5. | 4 | Finishing the event view and scorekeeping |
+| 7.5. | 5 | Tests, documentation, finishing up |
+| Sum | 41 |
