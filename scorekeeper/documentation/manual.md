@@ -33,7 +33,7 @@ Finally confirm the input of the event with the chosen data.
 ![Event4](./images/events4.png)  
 ### Inputting Events 4
 Now you can see the newly input event in the "Game Events" list.  
-![Event5](./images/event5.png)  
+![Event5](./images/events5.png)  
 ### Ending the Game
 When the game has run its course and all the events have been input, you can click the "End Game"-button at the bottom of the view to end the game.  
 ![End1](./images/end1.png)  
